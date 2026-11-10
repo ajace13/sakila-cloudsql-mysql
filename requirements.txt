@@ -1,0 +1,8 @@
+# Tests (run against any MySQL 8.0 with Sakila loaded)
+pymysql>=1.1
+pytest>=8.0
+ruff>=0.6
+# Notebooks against Cloud SQL
+pandas>=2.2
+cloud-sql-python-connector[pymysql]>=1.12
+jupyterlab>=4.2

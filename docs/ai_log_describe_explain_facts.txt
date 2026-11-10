@@ -1,0 +1,56 @@
+PROMPT LOG: DESCRIBE, EXPLAIN and fact checks with Claude
+
+----------------------------------------------------------------------
+1. PROMPT
+"Below are the outputs of DESCRIBE sakila.payment, sakila.rental, and sakila.film
+[pasted: the three DESCRIBE outputs]
+For each of the tables, what are the primary key, every foreign key and the table it points to, which columns allow NULL, and the data type of each money and date column?"
+
+SUMMARY: Gave the PK, FK targets (checked in sakila-schema.sql, since DESCRIBE only shows MUL), nullable columns and money/date types for payment, rental and film.
+
+2. PROMPT
+"Now a new task. I would like you to give me for every row of the plan: tje table, the access type (ALL, index, range, ref, eq_ref, const), the key used and the estimated rows - adn which table is read in full, and why. To do that for each of the explains for our past queries and put the otuput in respones.md
+[pasted: the EXPLAIN queries and plan tables for Q4, Q17 and Q26]"
+
+SUMMARY: Appended a per-row plan table for each query to docs/query_plans.md; full scans were film (Q4, Q17, 1000 rows) and category (Q26, 16 rows).
+
+3. PROMPT
+"For the plan with a full scan (type ALL) on the largest table, which index could change it and what that index costs on INSERT. Do not create it. One sentence: would it help this query — judged from the rows column? Answer this in a notebook cell"
+
+SUMMARY: Chose Q17 (film), proposed an index on film(rating), described its INSERT/UPDATE cost, and judged from rows = 1000 that it would not help much; added as a notebook cell, nothing created.
+
+4. PROMPT
+"Give me 5 simple facts about Sakila e.g. how many films, customers, actors or rentals; the most common rating; the earliest and latest payment_date; how many categories. Write your ansers in markdown cell in the notebook in a new subsection"
+
+SUMMARY: Counted from sakila-data.sql (1,000 films, 200 actors, 599 customers, 16,044 rentals, PG-13 most common at 223, payments 2005-05-24 to 2006-02-14, 16 categories) and wrote them in a notebook cell, noting they were not yet checked in SQL.
+
+
+5. PROMPT
+"Okay now I added those queries nad ran them. Now For each fact, write the one query that proves or disproves it, run it, and record: fact · Claude's answer · your query · actual result · match (Y/N). Make this table and put it below the last queries we just ran in the notebook"
+
+SUMMARY: Read the saved outputs of the five cells (Claude could not run them) and added the fact-check table with all five facts marked Y.
+
+6. PROMPT
+Write the query for "which store has more customers". Run it, and check the result with a second, independent query ... Do the two numbers agree?']
+Add this undenreath the last output in the notebook."
+
+SUMMARY: All five facts were right, so added a section with a customers-per-store query, a COUNT(*) vs sum-of-groups check, and an expected answer (store 1 = 326, store 2 = 273, total 599) that was not yet run.
+
+----------------------------------------------------------------------
+
+======================================================================
+WHERE CLAUDE WAS WRONG OR OVERCONFIDENT, AND HOW IT WAS CAUGHT
+
+1. Wrong figure (prompt 4, Q26 plan): Claude wrote that the plan meant "roughly 1,200 rental lookups".
+   The EXPLAIN rows were 1.6 category rows x 62 x 4 = about 400 lookups into rental, and each lookup returns about 3 rows, so about 1,200 rows are read.
+   Claude had confused lookups with rows read.
+   HOW IT WAS CAUGHT: prompt 5 asked Claude to name the EXPLAIN column that confirms or contradicts each statement. Redoing the rows x filtered arithmetic for the rental row exposed the mismatch.
+   The wrong wording is still in docs/query_plans.md under Q26.
+
+2. Overconfident (also from prompt 4): Claude called eq_ref "the best join access type" (const and system rank above it), and stated as fact that filtered 50.0% (Q17) and 10.0% (cat) are default guesses.
+   EXPLAIN does not say how filtered is calculated and Claude had not verified it.
+   HOW IT WAS CAUGHT: the same prompt 5 check. Claude could not point to a column that confirms those claims, so it listed them as "not confirmed by EXPLAIN".
+
+3. Least certain, still open: the store answer (store 1 = 326, store 2 = 273, total 599) was worked out from the rows in sakila-data.sql, not from the database.
+   Claude cannot run the notebook (it has no Cloud SQL connection), so the two store queries had no saved output when this log was written.
+   The answer stays an expectation until I run them and records the result.

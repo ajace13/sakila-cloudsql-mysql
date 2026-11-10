@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ci-only   # throwaway container that exists only for this job
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -pci-only"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      MYSQL_HOST: 127.0.0.1
+      MYSQL_PORT: "3306"
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ci-only
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install pymysql pytest ruff
+      - name: Download Sakila and load it, schema first, then data
+        run: |
+          curl -sSfL https://downloads.mysql.com/docs/sakila-db.tar.gz -o sakila-db.tar.gz
+          tar -xzf sakila-db.tar.gz
+          mysql -h 127.0.0.1 -uroot -p"$MYSQL_PASSWORD" < sakila-db/sakila-schema.sql
+          mysql -h 127.0.0.1 -uroot -p"$MYSQL_PASSWORD" < sakila-db/sakila-data.sql
+      - name: Verify the load
+        run: mysql -h 127.0.0.1 -uroot -p"$MYSQL_PASSWORD" -t < sql/01_verify_load.sql
+      - name: Lint Python and shell
+        run: |
+          ruff check .
+          shellcheck -S warning infra/*.sh
+      - name: Test
+        run: pytest -q

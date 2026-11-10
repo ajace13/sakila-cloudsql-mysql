@@ -1,0 +1,15 @@
+# configuration and credentials (never committed)
+env.sh
+.env
+*.pem
+*.json.key
+# downloaded data
+sakila-db/
+*.tar.gz
+# Python and Jupyter
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.venv/

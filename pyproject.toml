@@ -1,0 +1,10 @@
+[tool.ruff]
+line-length = 150
+target-version = "py311"
+extend-exclude = ["notebooks"]  # executed records of the Cloud SQL runs; kept as-is
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
