@@ -7,11 +7,14 @@ import pytest
 from conftest import ROOT
 
 SCRIPTS = sorted((ROOT / "infra").glob("*.sh"))
+BASH = shutil.which("bash")
+NO_WORKING_BASH = BASH is None or subprocess.run([BASH, "-c", "true"], capture_output=True).returncode != 0
 
 
+@pytest.mark.skipif(NO_WORKING_BASH, reason="no working bash (e.g. the WSL stub on Windows)")
 @pytest.mark.parametrize("path", SCRIPTS, ids=lambda p: p.name)
 def test_bash_syntax(path):
-    assert subprocess.run(["bash", "-n", str(path)], capture_output=True).returncode == 0
+    assert subprocess.run([BASH, "-n", str(path)], capture_output=True).returncode == 0
 
 
 def test_deploy_script_safety():
