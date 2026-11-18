@@ -20,7 +20,7 @@ Every command I ran is recorded in infra/command_log.sh — read it before propo
   log_bin_trust_function_creators=on and re-import.
 - Verified counts (v1.5): 16 base tables · film 1000 · actor 200 · customer 599 · rental 16044 ·
   payment 16044 rows · ROUND(SUM(payment.amount),2) = 67406.56.
-- Course material quoted 16,049 payments / 67,416.51, which does not match this download. Do not hard-code either total:
+- Older published figures quote 16,049 payments / 67,416.51, which does not match this download. Do not hard-code either total:
   reconcile against SUM(amount) from the payment table. A mismatch means re-import or explain it from the
   data, never "fix" rows.
 

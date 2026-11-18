@@ -141,7 +141,7 @@ exit
 | Base tables | 16 | Plus 7 views |
 | Films | 1,000 | |
 | Actors / customers | 200 / 599 | |
-| Payments | 16,044 rows, **67,406.56** | Course material quoted 16,049 / 67,416.51; this download has 16,044 / 67,406.56 |
+| Payments | 16,044 rows, **67,406.56** | Older published figures quote 16,049 / 67,416.51; this download has 16,044 / 67,406.56 |
 
 > **Version note:** the current download is **Sakila v1.5** (`head -30 sakila-db/sakila-data.sql | grep -i version`). Its payment rows total 67,406.56, so a total of 67,406.56 means the import is complete, not broken.
 

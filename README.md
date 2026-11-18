@@ -7,7 +7,7 @@ I stood up a managed MySQL 8.0 database on Google Cloud SQL from the command lin
 **Highlights**
 
 - **One re-runnable deploy script** ([infra/deploy_sakila.sh](infra/deploy_sakila.sh)). It creates the instance and database only if they're missing, imports only into an empty schema, prints three verification numbers, and tears everything down behind a typed confirmation. No password is ever written to a file.
-- **The load is reconciled, not assumed.** The course material quoted 16,049 payments totalling 67,416.51, but the current Sakila 1.5 download has 16,044 payments totalling 67,406.56. I report what the database returns and explain the gap, instead of "fixing" the data to match a remembered number.
+- **The load is reconciled, not assumed.** Older published figures quote 16,049 payments totalling 67,416.51, but the current Sakila 1.5 download has 16,044 payments totalling 67,406.56. I report what the database returns and explain the gap, instead of "fixing" the data to match a remembered number.
 - **34 SQL questions, with the traps called out.** One film rents for 6 days, not 7. "Not empty" has to exclude both `NULL` and `''`. Two different actors share a name. Ties at a `LIMIT` need a tie-breaker. Two questions correctly return nothing.
 - **A modeling change written as a migration.** The `payment_type` lookup table with a foreign key from `payment` can run twice safely and comes with a rollback script. Tests confirm it leaves every payment unchanged.
 - **AI output checked against the database.** For each claim the assistant made about keys, plans or facts, I named the `DESCRIBE` or `EXPLAIN` column that confirms or contradicts it.
