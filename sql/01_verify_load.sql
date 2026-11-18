@@ -1,6 +1,6 @@
 -- Verify the Sakila load: the same three numbers infra/deploy_sakila.sh prints, plus row counts.
 -- Expected for Sakila 1.5 (downloads.mysql.com/docs/sakila-db.tar.gz): 16 base tables, 1,000 films,
--- 16,044 payments totalling 67,406.56. Older course material quotes 16,049 / 67,416.51 from an older release;
+-- 16,044 payments totalling 67,406.56. Older published figures quote 16,049 / 67,416.51 from an older release;
 -- reconcile against the data you loaded, never against a remembered number.
 SELECT
   (SELECT COUNT(*) FROM information_schema.tables

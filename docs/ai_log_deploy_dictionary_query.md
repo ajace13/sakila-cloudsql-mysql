@@ -26,7 +26,7 @@ I reviewed the three required items:
 - The initial password approach relied on an uncertain MYSQL_PWD fallback. Running through the agent also did not provide a usable password-entry prompt.
 - env.sh was missing DB, so the script initially stopped before deployment.
 - A verification error suggested missing data even though the actual failure was authentication.
-- Claude later quoted a payment total of 67,406.56, whereas the course material quoted 67,416.51. These conflicting expected values need to be reconciled against the actual query output.
+- Claude later quoted a payment total of 67,406.56, whereas older published figures quote 67,416.51. These conflicting expected values need to be reconciled against the actual query output.
 
 **What I changed:**
 I requested revisions before approving execution. I had Claude separate import from read-only verification, import only into a confirmed empty schema, stop on failed lookups, remove the global password exports, and require DB to equal sakila.
